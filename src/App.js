@@ -41,12 +41,12 @@ class App extends Component {
             }],
             layout: {
                 margin: {t:0, r: 0, l: 20, b: 20}
-            }        
+            }
         };
 
         this.state = {
             json: plotJSON,
-            filterByPlotType: {label: 'charts', value: ''},
+            filterByPlotType: {label: 'Charts', value: ''},
             plotUrl: ''
         };
     }
@@ -156,18 +156,17 @@ class App extends Component {
             {label: 'Mapbox Maps', value: 'scattermapbox'},
             {label: 'Parallel Coordinate Plots', value: 'parcoords'},
             {label: 'Contour Maps', value: 'contour'},
-            {label: 'Candlestick Plots', value: 'candlestick'}
+            {label: 'Candlestick Plots', value: 'candlestick'},
+            {label: 'Animations', value: 'animation'}            
         ];
 
         let searchPlaceholder = 'Search charts on plot.ly by topic, e.g. "GDP"';
         if(this.state.filterByPlotType) {
-            searchPlaceholder = `Search ${this.state.filterByPlotType.label} on plot.ly by topic, e.g. "GDP"`;
+            searchPlaceholder = `Search ${this.state.filterByPlotType.label.toLowerCase()} \
+on plot.ly by topic, e.g. "GDP"`;
         }
 
-        let plotInputPlaceholder = 'Copy a plot URL from plot.ly or Gist of plot JSON here';
-        if(this.state.plotUrl) {
-            plotInputPlaceholder = this.state.plotUrl;
-        }        
+        const plotInputPlaceholder = 'Copy a URL from plot.ly or Gist of plot JSON here, e.g. https://plot.ly/~MattSundquist/18964.json';
 
         let footnoteStyle = {
             fontSize: '12px',
@@ -180,40 +179,46 @@ class App extends Component {
             <div className="App">
                 <SplitPane split="vertical" minSize={100} defaultSize={400}>
                     <div>
-                        <Select
-                            name="select plot type"
-                            options={PLOT_TYPES}
-                            placeholder="Filter by Chart Type"
-                            onChange={this.handleNewPlotType}
-                            value={this.state.filterByPlotType}
-                        />
-                       <Select.Async
-                            name="plotlyjs-mocks"
-                            loadOptions={this.getMocks}
-                            placeholder={'Search plotly.js mocks'}
-                            onChange={this.handleNewPlot}
-                       />                
+                        <div className='controls-panel'>
+                            <Select
+                                name="select plot type"
+                                options={PLOT_TYPES}
+                                placeholder="Filter by Chart Type"
+                                onChange={this.handleNewPlotType}
+                                value={this.state.filterByPlotType}
+                           />
+                           <br/>
+                           <Select.Async
+                                name="plotlyjs-mocks"
+                                loadOptions={this.getMocks}
+                                placeholder={'Search plotly.js mocks'}
+                                onChange={this.handleNewPlot}
+                           />
+                       </div>
                        <ReactJSONEditor
-                            json={this.state.json}
-                            onChange={this.handleJsonChange}
-                            plotUrl={this.state.plotUrl}
+                           json={this.state.json}
+                           onChange={this.handleJsonChange}
+                           plotUrl={this.state.plotUrl}
                        />                  
                        <p style={footnoteStyle}>{`Copy link: ${this.state.plotUrl}`}</p>
                     </div>                         
                     <div>
-                       <Select.Async
-                            name="plot-search-bar"
-                            loadOptions={this.getPlots}
-                            placeholder={searchPlaceholder}
-                            onChange={this.handleNewPlot}
-                            ref="plotSearchBar"
-                            cache={false}
-                        />
-                        <input
-                            placeholder={plotInputPlaceholder}
-                            onBlur={this.handleNewPlot}
-                            style={{padding:'5px', width:'100%'}}
-                        />                
+                       <div className='controls-panel'>
+                            <Select.Async
+                                name="plot-search-bar"
+                                loadOptions={this.getPlots}
+                                placeholder={searchPlaceholder}
+                                onChange={this.handleNewPlot}
+                                ref="plotSearchBar"
+                                cache={false}
+                            />
+                            <br/>
+                            <input
+                                placeholder={plotInputPlaceholder}
+                                onBlur={this.handleNewPlot}
+                                style={{padding:'5px', width:'95%'}}
+                            />
+                        </div>
                         <PlotlyComponent
                             data={this.state.json.data}
                             layout={this.state.json.layout}
