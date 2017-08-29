@@ -46,7 +46,8 @@ class App extends Component {
 
         this.state = {
             json: plotJSON,
-            filterByPlotType: {label: 'Any Chart (no filter)', value: ''}
+            filterByPlotType: {label: 'charts', value: ''},
+            plotUrl: ''
         };
     }
     
@@ -55,17 +56,38 @@ class App extends Component {
     }
 
     handleNewPlot = option => {
-        fetch(option.value)
+        let url = '';
+        if ('value' in option) {
+            url = option.value;
+        }
+        else if ('target' in option) {
+            url = option.target.value;
+            if (url.includes('http')) {
+                if (!url.includes('.json')) {
+                    url = url + '.json'
+                }
+            }
+        }
+        console.log(option, url);
+
+        if(url) {
+            fetch(url)
             .then((response) => response.json())
             .then((newJSON) => {
-                if ('height' in newJSON.layout) {
-                    newJSON.layout.height = null;
+                if ('layout' in newJSON) {    
+                    if ('height' in newJSON.layout) {
+                        newJSON.layout.height = null;
+                    }
+                    if ('width' in newJSON.layout) {
+                        newJSON.layout.width = null;
+                    }
                 }
-                if ('width' in newJSON.layout) {
-                    newJSON.layout.width = null;
-                }
-                this.setState({json: newJSON});
+                this.setState({
+                    json: newJSON,
+                    plotUrl: url
+                });
             });
+        }
     }
     
     getPlots = (input) => {
@@ -96,6 +118,22 @@ class App extends Component {
 		    });
     };
 
+    getMocks = () => {
+		return fetch('https://api.github.com/repositories/45646037/contents/test/image/mocks')
+		    .then((response) => response.json())
+		    .then((json) => {
+			    return {
+                    complete: true,
+                    options: json.map(function(o) {
+                        return {
+                            label: o.name,
+                            value: o.download_url
+                        };
+                    })
+                };
+		    });
+    };
+    
     handleNewPlotType = option => {
         this.setState({filterByPlotType: option});
     }
@@ -121,9 +159,21 @@ class App extends Component {
             {label: 'Candlestick Plots', value: 'candlestick'}
         ];
 
-        let searchPlaceholder = 'Search charts on plot.ly';
+        let searchPlaceholder = 'Search charts on plot.ly by topic, e.g. "GDP"';
         if(this.state.filterByPlotType) {
-            searchPlaceholder = `Search ${this.state.filterByPlotType.label} on plot.ly`;
+            searchPlaceholder = `Search ${this.state.filterByPlotType.label} on plot.ly by topic, e.g. "GDP"`;
+        }
+
+        let plotInputPlaceholder = 'Copy a plot URL from plot.ly or Gist of plot JSON here';
+        if(this.state.plotUrl) {
+            plotInputPlaceholder = this.state.plotUrl;
+        }        
+
+        let footnoteStyle = {
+            fontSize: '12px',
+            textAlign: 'left',
+            width: '300px',
+            overflowWrap: 'break-word'
         }
         
         return (
@@ -137,10 +187,18 @@ class App extends Component {
                             onChange={this.handleNewPlotType}
                             value={this.state.filterByPlotType}
                         />
-                        <ReactJSONEditor
+                       <Select.Async
+                            name="plotlyjs-mocks"
+                            loadOptions={this.getMocks}
+                            placeholder={'Search plotly.js mocks'}
+                            onChange={this.handleNewPlot}
+                       />                
+                       <ReactJSONEditor
                             json={this.state.json}
                             onChange={this.handleJsonChange}
-                        />
+                            plotUrl={this.state.plotUrl}
+                       />                  
+                       <p style={footnoteStyle}>{`Copy link: ${this.state.plotUrl}`}</p>
                     </div>                         
                     <div>
                        <Select.Async
@@ -150,8 +208,13 @@ class App extends Component {
                             onChange={this.handleNewPlot}
                             ref="plotSearchBar"
                             cache={false}
-                       />
-                       <PlotlyComponent
+                        />
+                        <input
+                            placeholder={plotInputPlaceholder}
+                            onBlur={this.handleNewPlot}
+                            style={{padding:'5px', width:'100%'}}
+                        />                
+                        <PlotlyComponent
                             data={this.state.json.data}
                             layout={this.state.json.layout}
                             config={{displayModeBar: false}}
