@@ -33,14 +33,19 @@ class App extends Component {
             data: [{
                 x: [1,2,3,4],
                 y: [1,3,2,6],
-                type: 'bar'
+                type: 'bar',
+                marker: {color: '#ab63fa'},
+                name: 'Bar'
             }, {
                 x: [1,2,3,4],
                 y: [3,2,7,4],
-                type: 'line'
+                type: 'line',
+                marker: {color: '#19d3f3'},
+                name: 'Line'
             }],
             layout: {
-                margin: {t:0, r: 0, l: 20, b: 20}
+                plotBackground: '#f3f6fa',
+                margin: {t:0, r: 0, l: 20, b: 30},
             }
         };
 
@@ -172,7 +177,8 @@ on plot.ly by topic, e.g. "GDP"`;
             fontSize: '12px',
             textAlign: 'left',
             width: '300px',
-            overflowWrap: 'break-word'
+            overflowWrap: 'break-word',
+            margin: '10px'
         }
         
         return (
@@ -201,6 +207,13 @@ on plot.ly by topic, e.g. "GDP"`;
                            plotUrl={this.state.plotUrl}
                        />                  
                        <p style={footnoteStyle}>{`Copy link: ${this.state.plotUrl}`}</p>
+                       <a
+                           style={footnoteStyle}
+                           target="_blank"
+                           href="https://plot.ly/javascript/reference"
+                       >                
+                           JSON Key/Value Reference
+                       </a>                
                     </div>                         
                     <div>
                        <div className='controls-panel'>

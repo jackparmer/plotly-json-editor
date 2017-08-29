@@ -23,3 +23,12 @@ body {
 .jsoneditor {
     border-color: #c8dfe3 !important;
 }
+
+a {
+    color: #119dff;
+    font-weight: normal;
+}
+
+a:hover{
+    color: #0d76bf;
+}
