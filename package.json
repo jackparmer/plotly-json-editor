@@ -1,0 +1,20 @@
+{
+  "name": "plotly-json-editor",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "qs": "^6.5.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-select": "^1.0.0-rc.5"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
