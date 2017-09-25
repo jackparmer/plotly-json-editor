@@ -73,7 +73,6 @@ class App extends Component {
                 }
             }
         }
-        console.log(option, url);
 
         if(url) {
             fetch(url)
@@ -117,7 +116,7 @@ class App extends Component {
 			    return { options: json.files.map(function(o) {
                     return {
                         label: `${o.filename} by ${o.owner}, ${o.views} views`,
-                        value: o.web_url + '.json'
+                        value: o.web_url.replace(/\/$/, "") + '.json'
                     };
                 })};
 		    });
@@ -158,6 +157,7 @@ class App extends Component {
             {label: 'Histograms', value: 'histogram'},
             {label: 'Box Plots', value: 'box'},
             {label: 'Choropleth Maps', value: 'choropleth'},
+            {label: 'Geoscatter Maps', value: 'scattergeo'},            
             {label: 'Mapbox Maps', value: 'scattermapbox'},
             {label: 'Parallel Coordinate Plots', value: 'parcoords'},
             {label: 'Contour Maps', value: 'contour'},
